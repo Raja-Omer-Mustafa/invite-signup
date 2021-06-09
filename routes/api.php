@@ -23,4 +23,8 @@ Route::get('/version', function () {
     return response()->success("Version Get Successfully", ["version" => "1.0"]);
 });
 
-Route::post('/invitation', [InviteController::class, 'store']);
+Route::group(['middleware' => ['admin']], function () {
+	Route::post('/invitation', [InviteController::class, 'store']);
+});
+Route::post('/invitation/process/{token}', [InviteController::class, 'process'])->name('invitation.process');
+Route::post('/otp/{code}', [InviteController::class, 'otp'])->name('otp');

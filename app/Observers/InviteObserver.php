@@ -3,12 +3,13 @@
 namespace App\Observers;
 
 use App\Models\Invite;
+use App\Mail\InviteLink;
+use Illuminate\Support\Facades\Mail;
 
 class InviteObserver
 {
     public function creating(Invite $invite)
     {
-        dd("asdasd");
         $invite->token = $this->generateToken();
     }
     /**
@@ -19,7 +20,8 @@ class InviteObserver
      */
     public function created(Invite $invite)
     {
-        event(new NewInviteWasCreated($invite));
+        Mail::to($invite->email)->send(new InviteLink($invite));
+        // event(new NewInviteWasCreated($invite));
     }
 
     protected function generateToken()
