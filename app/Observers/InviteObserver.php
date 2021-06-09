@@ -8,7 +8,7 @@ class InviteObserver
 {
     public function creating(Invite $invite)
     {
-        dd("asdasd");
+        dd("creating");
         $invite->token = $this->generateToken();
     }
     /**
@@ -19,6 +19,7 @@ class InviteObserver
      */
     public function created(Invite $invite)
     {
+        dd("created");
         event(new NewInviteWasCreated($invite));
     }
 
