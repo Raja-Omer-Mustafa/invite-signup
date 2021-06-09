@@ -24,7 +24,14 @@ class InviteRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'unique:invites,email'
+            'email' => 'required|email|unique:invites,email'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.unique' => 'Invitation with this email address already requested.'
         ];
     }
 }

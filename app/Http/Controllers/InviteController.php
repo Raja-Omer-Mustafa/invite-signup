@@ -7,13 +7,16 @@ use App\Models\Invite;
 use App\Http\Requests\InviteRequest;
 use Validator;
 use Illuminate\Support\Str;
+use App\Models\User;
 
 class InviteController extends Controller
 {
     public function store(Request $request, Invite $invite)
     {
-        $rules = (new InviteRequest)->rules();
-        $validator = Validator::make($request->all(), $rules);
+        $inviteRequest = new InviteRequest();
+        $rules = $inviteRequest->rules();
+        $messages = $inviteRequest->messages();
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
             return response()->error($validator->errors()->first());
         }
@@ -25,12 +28,47 @@ class InviteController extends Controller
         return response()->error("Contact Support Team");
     }
 
-    public function store(Request $request)
+    public function process(Request $request, $token, Invite $invite)
     {
-        Invite::create([
-            'token' => Str::random(10),
-            'name' => 'abc',
-            'email' => 'abc@gmail.com'
+        $data = $request->all();
+        $data['token'] = $token;
+        $rules = [ // can define separate request for signup rules
+            'username' => [
+                'required',
+                'string',
+                'min:4',
+                'max:20',
+                'unique:users,name',
+                'alpha_dash',
+            ],
+            'password' => [
+                'required', 
+                'string',
+                'min:8',
+                'confirmed'
+            ],
+            'token' => [
+                'exists:invites'
+            ]
+        ];
+        $validator = Validator::make($data, $rules);
+        if ($validator->fails()) {
+            return response()->error($validator->errors()->first());
+        }
+        $user = User::create([
+            'name' => $request->username,
+            'username' => $request->username,
+            'email' => $invite->getEmail($token),
+            'password' => $request->password,
         ]);
+        
+        if ($user) {
+            return response()->success("Verify OTP check your email");
+        }
+    }
+
+    public function otp($code)
+    {
+        dd($code);
     }
 }

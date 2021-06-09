@@ -45,4 +45,10 @@ class Invite extends Model
         }
         return abort('404', 'No invite was found');
     }
+
+    public function getEmail($token)
+    {
+        $invite = $this->where('token', $token)->first();
+        return $invite->email;
+    }
 }
