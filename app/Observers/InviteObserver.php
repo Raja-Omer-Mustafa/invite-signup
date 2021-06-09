@@ -8,6 +8,7 @@ class InviteObserver
 {
     public function creating(Invite $invite)
     {
+        dd("asdasd");
         $invite->token = $this->generateToken();
     }
     /**

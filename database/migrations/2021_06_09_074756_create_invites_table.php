@@ -16,7 +16,6 @@ class CreateInvitesTable extends Migration
         Schema::create('invites', function (Blueprint $table) {
             $table->id();
             $table->string('token')->index();
-            $table->string('name');
             $table->string('email');
             $table->boolean('accepted')->default(0);
             $table->timestamp('accepted_at')->nullable();
