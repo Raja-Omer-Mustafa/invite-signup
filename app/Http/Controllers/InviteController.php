@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Invite;
 use App\Http\Requests\InviteRequest;
+use App\Http\Requests\SignupRequest;
 use Validator;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class InviteController extends Controller
 {
@@ -31,26 +33,16 @@ class InviteController extends Controller
     public function process(Request $request, $token, Invite $invite)
     {
         $data = $request->all();
+        $user = User::where('email', $invite->getEmail($token))->first();
+        if ($user) {
+            return response()->success("Verify OTP check your email",
+                [
+                    "accessToken" => $user->createToken(env('ACCESS_TOKEN_SECRET', 'Secret'))->accessToken
+                ]);
+        }
         $data['token'] = $token;
-        $rules = [ // can define separate request for signup rules
-            'username' => [
-                'required',
-                'string',
-                'min:4',
-                'max:20',
-                'unique:users,name',
-                'alpha_dash',
-            ],
-            'password' => [
-                'required', 
-                'string',
-                'min:8',
-                'confirmed'
-            ],
-            'token' => [
-                'exists:invites'
-            ]
-        ];
+        $signupRequest = new SignupRequest();
+        $rules = $signupRequest->rules();
         $validator = Validator::make($data, $rules);
         if ($validator->fails()) {
             return response()->error($validator->errors()->first());
@@ -63,12 +55,20 @@ class InviteController extends Controller
         ]);
         
         if ($user) {
-            return response()->success("Verify OTP check your email");
+            return response()->success("Verify OTP check your email",
+                [
+                    "accessToken" => $user->createToken(env('ACCESS_TOKEN_SECRET', 'Secret'))->accessToken
+                ]);
         }
     }
 
     public function otp($code)
     {
-        dd($code);
+        $user = User::where(['email' => Auth::user()->email, 'otp' => $code]);
+        if ($user->count() > 0) {
+            $user->update(['otp' => null]);
+            return response()->success("OTP verified Successfully");
+        }
+        return response()->error("Invalid OTP");
     }
 }
