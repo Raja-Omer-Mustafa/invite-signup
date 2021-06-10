@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpVerification;
+use App\Models\Invite;
 
 class UserObserver
 {
@@ -29,6 +30,7 @@ class UserObserver
      */
     public function created(User $user)
     {
+        Invite::where('email', $user->email)->update(['accepted' => 1]);
         Mail::to($user->email)->send(new OtpVerification($user));
     }
 

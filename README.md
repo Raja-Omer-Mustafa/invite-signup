@@ -1,5 +1,3 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
-
 <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
@@ -11,6 +9,17 @@
 
 Invite Signup is an invitation based signup system built in Laravel
 such as:
+
+# Laravel Passport Documentation
+Don't Forget to Run
+- php artisan migrate
+- php artisan passport:install
+- For more help read this document
+<p align="center">
+	<a href="https://laravel.com/docs/8.x/passport" target="_blank">
+		Laravel Passport
+	</a>
+</p>
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).
 - [Powerful dependency injection container](https://laravel.com/docs/container).
